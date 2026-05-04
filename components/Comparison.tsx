@@ -11,8 +11,8 @@ const rows = [
 
 export default function Comparison() {
   return (
-    <section className="bg-[#050d0c] py-20">
-      <div className="max-w-7xl mx-auto px-6">
+    <section className="bg-[#050d0c] py-8 sm:py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
 
         <p className="font-gantari text-xs font-bold text-[#00e676] tracking-[0.12em] uppercase mb-3">
           The MTR Difference

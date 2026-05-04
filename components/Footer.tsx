@@ -2,11 +2,11 @@
 
 export default function Footer() {
   return (
-    <footer className="bg-[#050d0c] pb-6">
-      <div className="max-w-7xl mx-auto px-6">
+    <footer className="bg-[#050d0c] pb-5">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
 
         {/* CTA Banner */}
-        <div className="rounded-2xl px-8 py-10 text-center relative overflow-hidden"
+        <div className="rounded-2xl px-6 sm:px-8 py-8 text-center relative overflow-hidden"
           style={{ border: "1px solid rgba(0,230,118,0.2)", background: "linear-gradient(145deg, #0d2218 0%, #081510 60%, #050d0c 100%)", boxShadow: "0 0 60px rgba(0,230,118,0.07)" }}>
 
           {/* Glow */}

@@ -1,8 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronDown, ChevronUp, ChevronsUpDown } from "lucide-react";
-import { brokers, type Broker } from "@/lib/brokers";
+
+type Broker = {
+  rank: number;
+  ticker: string;
+  name: string;
+  type: string;
+  regulation: string;
+  cpa: string | null;
+  rebate: string | null;
+  revShare: string | null;
+  netDeposit: boolean;
+  customHybrid: boolean;
+  badge?: "top-cpa" | "top-rebate";
+  categories: string[];
+};
 
 type Filter = "all" | "cpa" | "rebate" | "revshare" | "custom";
 type SortKey = "cpa" | "rebate" | "revshare" | null;
@@ -35,13 +49,35 @@ function YesNo({ val }: { val: boolean }) {
   );
 }
 
+function SkeletonRow() {
+  return (
+    <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+      {[...Array(8)].map((_, i) => (
+        <td key={i} className="px-3 py-3">
+          <div className="h-4 rounded animate-pulse" style={{ background: "rgba(255,255,255,0.06)", width: i === 1 ? "140px" : "80px" }} />
+        </td>
+      ))}
+    </tr>
+  );
+}
+
 const PAGE_SIZE = 10;
 
 export default function BrokerTable() {
+  const [brokers, setBrokers]           = useState<Broker[]>([]);
+  const [loading, setLoading]           = useState(true);
+  const [error, setError]               = useState(false);
   const [filter, setFilter]             = useState<Filter>("all");
   const [sortKey, setSortKey]           = useState<SortKey>("cpa");
   const [sortDir, setSortDir]           = useState<SortDir>("desc");
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+
+  useEffect(() => {
+    fetch("/api/brokers")
+      .then((r) => { if (!r.ok) throw new Error(); return r.json(); })
+      .then((data) => { setBrokers(data); setLoading(false); })
+      .catch(() => { setError(true); setLoading(false); });
+  }, []);
 
   function handleSort(key: SortKey) {
     if (sortKey === key) setSortDir(d => d === "desc" ? "asc" : "desc");
@@ -49,7 +85,7 @@ export default function BrokerTable() {
   }
 
   const filtered = brokers.filter(b =>
-    filter === "all" ? true : b.categories.includes(filter as Broker["categories"][number])
+    filter === "all" ? true : b.categories.includes(filter)
   );
   const sorted = [...filtered].sort((a, b) => {
     if (!sortKey) return a.rank - b.rank;
@@ -71,7 +107,6 @@ export default function BrokerTable() {
     <section className="bg-[#050d0c] py-8 sm:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
 
-        {/* Heading */}
         <h2 className="font-gantari font-extrabold text-white mb-2 text-[clamp(1.6rem,3vw,2.4rem)]">
           Pick Your <span className="text-[#00e676]">Best Deal</span>
         </h2>
@@ -80,9 +115,8 @@ export default function BrokerTable() {
           Filter by commission type or sort any column to find your best match.
         </p>
 
-        {/* Filter + Sort — stacked on mobile */}
+        {/* Filter + Sort */}
         <div className="flex flex-col gap-3 mb-6">
-          {/* Pills */}
           <div className="flex flex-wrap gap-2">
             {filterLabels.map(({ key, label }) => (
               <button key={key} onClick={() => { setFilter(key); setVisibleCount(PAGE_SIZE); }}
@@ -96,7 +130,6 @@ export default function BrokerTable() {
               </button>
             ))}
           </div>
-          {/* Sort */}
           <div className="flex flex-wrap items-center gap-2">
             <span className="font-gantari text-[0.78rem] text-gray-500">Sort by:</span>
             {(["cpa", "rebate", "revshare"] as SortKey[]).map((k, i) => {
@@ -116,96 +149,109 @@ export default function BrokerTable() {
           </div>
         </div>
 
-        {/* Table — horizontal scroll on mobile */}
-        <div className="rounded-2xl overflow-hidden overflow-x-auto" style={{ border: "1px solid rgba(255,255,255,0.07)" }}>
-          <table className="w-full border-collapse" style={{ minWidth: "680px" }}>
-            <thead>
-              <tr style={{ background: "rgba(255,255,255,0.02)", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
-                <th className="font-gantari text-[0.7rem] font-semibold text-gray-500 tracking-[0.06em] uppercase px-3 py-3 text-center w-10">#</th>
-                <th className="font-gantari text-[0.7rem] font-semibold text-gray-500 tracking-[0.06em] uppercase px-3 py-3 text-left">Broker</th>
-                {([["CPA","cpa"],["Rebate / Lot","rebate"],["Rev Share","revshare"]] as [string, SortKey][]).map(([label, k]) => (
-                  <th key={label} onClick={() => handleSort(k)}
-                    className="font-gantari text-[0.7rem] font-semibold text-gray-500 tracking-[0.06em] uppercase px-3 py-3 text-left cursor-pointer select-none whitespace-nowrap">
-                    <span className="inline-flex items-center gap-1">{label} <SortIcon k={k} /></span>
-                  </th>
-                ))}
-                <th className="font-gantari text-[0.7rem] font-semibold text-gray-500 tracking-[0.06em] uppercase px-3 py-3 text-center whitespace-nowrap">Net Deposit</th>
-                <th className="font-gantari text-[0.7rem] font-semibold text-gray-500 tracking-[0.06em] uppercase px-3 py-3 text-center whitespace-nowrap">Custom/Hybrid</th>
-                <th className="font-gantari text-[0.7rem] font-semibold text-gray-500 tracking-[0.06em] uppercase px-3 py-3 text-center">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {visible.map((broker, idx) => (
-                <tr key={broker.rank} className="transition-colors hover:bg-white/[0.02]"
-                  style={{ borderBottom: idx < visible.length - 1 ? "1px solid rgba(255,255,255,0.05)" : "none" }}>
-
-                  <td className="px-3 py-3 text-center">
-                    <span className="font-gantari font-semibold text-[0.9rem] text-gray-500">{idx + 1}</span>
-                  </td>
-
-                  <td className="px-3 py-3">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-lg flex items-center justify-center font-gantari font-bold text-[0.6rem] text-[#00e676] flex-shrink-0"
-                        style={{ background: "linear-gradient(145deg, #1a2e28, #0e1f1a)", border: "1px solid rgba(255,255,255,0.1)" }}>
-                        {broker.ticker}
-                      </div>
-                      <div>
-                        <p className="font-gantari font-bold text-[0.88rem] text-white whitespace-nowrap">{broker.name}</p>
-                        <p className="font-gantari text-[0.7rem] text-gray-500 whitespace-nowrap">{broker.type} · {broker.regulation}</p>
-                      </div>
-                    </div>
-                  </td>
-
-                  <td className="px-3 py-3">
-                    {broker.cpa ? (
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className="font-gantari font-semibold text-[0.88rem] text-[#00e676] whitespace-nowrap">{broker.cpa}</span>
-                        {broker.badge === "top-cpa" && (
-                          <span className="font-gantari text-[0.62rem] font-bold px-1.5 py-0.5 rounded-full bg-[#00e676] text-black whitespace-nowrap">Top CPA</span>
-                        )}
-                      </div>
-                    ) : <span className="text-gray-700">—</span>}
-                  </td>
-
-                  <td className="px-3 py-3">
-                    {broker.rebate ? (
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className="font-gantari font-semibold text-[0.88rem] text-[#00e676] whitespace-nowrap">{broker.rebate}</span>
-                        {broker.badge === "top-rebate" && (
-                          <span className="font-gantari text-[0.62rem] font-bold px-1.5 py-0.5 rounded-full bg-red-500 text-white whitespace-nowrap">Top rebate</span>
-                        )}
-                      </div>
-                    ) : <span className="text-gray-700">—</span>}
-                  </td>
-
-                  <td className="px-3 py-3">
-                    {broker.revShare
-                      ? <span className="font-gantari font-semibold text-[0.88rem] text-[#00e676] whitespace-nowrap">{broker.revShare}</span>
-                      : <span className="text-gray-700">—</span>}
-                  </td>
-
-                  <td className="px-3 py-3 text-center"><YesNo val={broker.netDeposit} /></td>
-                  <td className="px-3 py-3 text-center"><YesNo val={broker.customHybrid} /></td>
-                  <td className="px-3 py-3 text-center">
-                    <a href="#" className="font-gantari text-[0.8rem] font-bold px-4 py-1.5 rounded-lg text-[#00e676] transition-all hover:bg-[#00e676]/10 whitespace-nowrap inline-block"
-                      style={{ border: "1px solid rgba(0,230,118,0.5)" }}>
-                      Apply now
-                    </a>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          <div className="px-4 py-2.5" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
-            <p className="font-gantari text-[0.72rem] text-gray-600">
-              * Rates vary by region and volume. Exact terms confirmed on application.
-            </p>
+        {/* Error state */}
+        {error && (
+          <div className="rounded-xl p-6 text-center font-gantari text-gray-500 text-sm"
+            style={{ border: "1px solid rgba(255,255,255,0.07)" }}>
+            Failed to load broker data. Please refresh the page.
           </div>
-        </div>
+        )}
+
+        {/* Table */}
+        {!error && (
+          <div className="rounded-2xl overflow-hidden overflow-x-auto" style={{ border: "1px solid rgba(255,255,255,0.07)" }}>
+            <table className="w-full border-collapse" style={{ minWidth: "680px" }}>
+              <thead>
+                <tr style={{ background: "rgba(255,255,255,0.02)", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
+                  <th className="font-gantari text-[0.7rem] font-semibold text-gray-500 tracking-[0.06em] uppercase px-3 py-3 text-center w-10">#</th>
+                  <th className="font-gantari text-[0.7rem] font-semibold text-gray-500 tracking-[0.06em] uppercase px-3 py-3 text-left">Broker</th>
+                  {([["CPA","cpa"],["Rebate / Lot","rebate"],["Rev Share","revshare"]] as [string, SortKey][]).map(([label, k]) => (
+                    <th key={label} onClick={() => handleSort(k)}
+                      className="font-gantari text-[0.7rem] font-semibold text-gray-500 tracking-[0.06em] uppercase px-3 py-3 text-left cursor-pointer select-none whitespace-nowrap">
+                      <span className="inline-flex items-center gap-1">{label} <SortIcon k={k} /></span>
+                    </th>
+                  ))}
+                  <th className="font-gantari text-[0.7rem] font-semibold text-gray-500 tracking-[0.06em] uppercase px-3 py-3 text-center whitespace-nowrap">Net Deposit</th>
+                  <th className="font-gantari text-[0.7rem] font-semibold text-gray-500 tracking-[0.06em] uppercase px-3 py-3 text-center whitespace-nowrap">Custom/Hybrid</th>
+                  <th className="font-gantari text-[0.7rem] font-semibold text-gray-500 tracking-[0.06em] uppercase px-3 py-3 text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading
+                  ? [...Array(10)].map((_, i) => <SkeletonRow key={i} />)
+                  : visible.map((broker, idx) => (
+                    <tr key={broker.rank} className="transition-colors hover:bg-white/[0.02]"
+                      style={{ borderBottom: idx < visible.length - 1 ? "1px solid rgba(255,255,255,0.05)" : "none" }}>
+
+                      <td className="px-3 py-3 text-center">
+                        <span className="font-gantari font-semibold text-[0.9rem] text-gray-500">{idx + 1}</span>
+                      </td>
+
+                      <td className="px-3 py-3">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-8 h-8 rounded-lg flex items-center justify-center font-gantari font-bold text-[0.6rem] text-[#00e676] flex-shrink-0"
+                            style={{ background: "linear-gradient(145deg, #1a2e28, #0e1f1a)", border: "1px solid rgba(255,255,255,0.1)" }}>
+                            {broker.ticker}
+                          </div>
+                          <div>
+                            <p className="font-gantari font-bold text-[0.88rem] text-white whitespace-nowrap">{broker.name}</p>
+                            <p className="font-gantari text-[0.7rem] text-gray-500 whitespace-nowrap">{broker.type} · {broker.regulation}</p>
+                          </div>
+                        </div>
+                      </td>
+
+                      <td className="px-3 py-3">
+                        {broker.cpa ? (
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="font-gantari font-semibold text-[0.88rem] text-[#00e676] whitespace-nowrap">{broker.cpa}</span>
+                            {broker.badge === "top-cpa" && (
+                              <span className="font-gantari text-[0.62rem] font-bold px-1.5 py-0.5 rounded-full bg-[#00e676] text-black whitespace-nowrap">Top CPA</span>
+                            )}
+                          </div>
+                        ) : <span className="text-gray-700">—</span>}
+                      </td>
+
+                      <td className="px-3 py-3">
+                        {broker.rebate ? (
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="font-gantari font-semibold text-[0.88rem] text-[#00e676] whitespace-nowrap">{broker.rebate}</span>
+                            {broker.badge === "top-rebate" && (
+                              <span className="font-gantari text-[0.62rem] font-bold px-1.5 py-0.5 rounded-full bg-red-500 text-white whitespace-nowrap">Top rebate</span>
+                            )}
+                          </div>
+                        ) : <span className="text-gray-700">—</span>}
+                      </td>
+
+                      <td className="px-3 py-3">
+                        {broker.revShare
+                          ? <span className="font-gantari font-semibold text-[0.88rem] text-[#00e676] whitespace-nowrap">{broker.revShare}</span>
+                          : <span className="text-gray-700">—</span>}
+                      </td>
+
+                      <td className="px-3 py-3 text-center"><YesNo val={broker.netDeposit} /></td>
+                      <td className="px-3 py-3 text-center"><YesNo val={broker.customHybrid} /></td>
+                      <td className="px-3 py-3 text-center">
+                        <a href="#" className="font-gantari text-[0.8rem] font-bold px-4 py-1.5 rounded-lg text-[#00e676] transition-all hover:bg-[#00e676]/10 whitespace-nowrap inline-block"
+                          style={{ border: "1px solid rgba(0,230,118,0.5)" }}>
+                          Apply now
+                        </a>
+                      </td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+
+            <div className="px-4 py-2.5" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+              <p className="font-gantari text-[0.72rem] text-gray-600">
+                * Rates vary by region and volume. Exact terms confirmed on application.
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Load more */}
-        {hasMore && (
+        {!loading && !error && hasMore && (
           <div className="flex flex-col items-center gap-2 mt-5">
             <button onClick={() => setVisibleCount(c => c + PAGE_SIZE)}
               className="flex items-center gap-2 font-gantari text-[0.85rem] font-semibold px-10 py-2.5 rounded-xl text-gray-400 transition-all hover:text-white"

@@ -205,7 +205,7 @@ export default function BrokerTable() {
                           <div className="flex items-center gap-1.5 flex-wrap">
                             <span className="font-gantari font-semibold text-[0.88rem] text-[#00e676] whitespace-nowrap">{broker.cpa}</span>
                             {broker.badge === "top-cpa" && (
-                              <span className="font-gantari text-[0.62rem] font-bold px-1.5 py-0.5 rounded-full bg-[#00e676] text-black whitespace-nowrap">Top CPA</span>
+                              <span className="font-gantari text-[0.62rem] font-bold px-2 py-0.5 rounded-full bg-red-500 text-white whitespace-nowrap">Top CPA</span>
                             )}
                           </div>
                         ) : <span className="text-gray-700">—</span>}
@@ -216,7 +216,7 @@ export default function BrokerTable() {
                           <div className="flex items-center gap-1.5 flex-wrap">
                             <span className="font-gantari font-semibold text-[0.88rem] text-[#00e676] whitespace-nowrap">{broker.rebate}</span>
                             {broker.badge === "top-rebate" && (
-                              <span className="font-gantari text-[0.62rem] font-bold px-1.5 py-0.5 rounded-full bg-red-500 text-white whitespace-nowrap">Top rebate</span>
+                              <span className="font-gantari text-[0.62rem] font-bold px-2 py-0.5 rounded-full bg-red-500 text-white whitespace-nowrap">Top rebate</span>
                             )}
                           </div>
                         ) : <span className="text-gray-700">—</span>}

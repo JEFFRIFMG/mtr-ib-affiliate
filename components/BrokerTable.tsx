@@ -116,7 +116,7 @@ export default function BrokerTable() {
         </p>
 
         {/* Filter + Sort */}
-        <div className="flex flex-col gap-3 mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
           <div className="flex flex-wrap gap-2">
             {filterLabels.map(({ key, label }) => (
               <button key={key} onClick={() => { setFilter(key); setVisibleCount(PAGE_SIZE); }}

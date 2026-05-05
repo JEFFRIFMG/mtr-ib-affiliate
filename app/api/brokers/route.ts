@@ -44,7 +44,7 @@ function parseCSV(text: string) {
 export async function GET() {
   try {
     const res = await fetch(SHEET_CSV_URL, {
-      next: { revalidate: 60 }, // cache 60 seconds
+      next: { revalidate: 10 }, // cache 10 seconds
     });
 
     if (!res.ok) throw new Error("Failed to fetch sheet");

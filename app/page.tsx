@@ -1,20 +1,12 @@
 import Navbar from "@/components/Navbar";
-import Hero from "@/components/Hero";
-import BrokerTable from "@/components/BrokerTable";
-import Comparison from "@/components/Comparison";
-import WhyMTR from "@/components/WhyMTR";
-import WhoItsFor from "@/components/WhoItsFor";
+import HomeBrokerList from "@/components/HomeBrokerList";
 import Footer from "@/components/Footer";
 
-export default function Home() {
+export default function HomePage() {
   return (
     <main className="min-h-screen bg-[#050d0c]">
       <Navbar />
-      <Hero />
-      <BrokerTable />
-      <Comparison />
-      <WhyMTR />
-      <WhoItsFor />
+      <HomeBrokerList />
       <Footer />
     </main>
   );

@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --bg: #050d0c;
+  --bg: #000000;
   --green: #00e676;
   --font-body: 'Gantari', system-ui, sans-serif;
 }
@@ -24,6 +24,27 @@ body {
 
 @layer utilities {
   .font-gantari { font-family: 'Gantari', system-ui, sans-serif; }
+  /* --- Glassmorphism --- */
+  .bg-glass {
+  /* 1. Background: Kita kurangin opacity hitamnya, tapi naikin pantulan putihnya (0.18) */
+  background: linear-gradient(
+    135deg, 
+    rgba(255, 255, 255, 0.18) 0%,   /* Pantulan lampu lebih tajam */
+    rgba(255, 255, 255, 0.04) 40%,  /* Lebih bening di tengah */
+    rgba(0, 0, 0, 0) 100%           /* Transparan total di ujung */
+  ); 
+  
+  /* 2. Blur: Turunin dikit ke 8px biar nggak terlalu 'ngebul' (berasap) */
+  backdrop-filter: blur(8px); 
+  -webkit-backdrop-filter: blur(8px);
+  
+  /* 3. Border: Pakai putih tipis yang konsisten */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  
+  /* 4. Shadow: Bikin shadow hitamnya lebih pekat biar 'kontras' sama background hitam */
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+}
+  /* ----------------------------------------- */
   .bg-card { background: linear-gradient(145deg, #0d1a16 0%, #080f0c 100%); }
   .bg-card-green { background: linear-gradient(145deg, #0d2218 0%, #081510 100%); }
   .bg-ticker { background: linear-gradient(145deg, #1a2e28, #0e1f1a); }

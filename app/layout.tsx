@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'IB & Affiliate Program — MyTradingReviews',
+  title: 'My Trading Reviews',
   description: 'Institutional rates, available to everyone. Up to $800 CPA, $15/lot rebate, 50% rev share.',
 }
 

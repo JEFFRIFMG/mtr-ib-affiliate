@@ -263,45 +263,46 @@ export default function HomeBrokerList() {
               className="border border-[#1a2e1a] border-l-4 rounded-xl flex flex-col xl:flex-row items-stretch bg-[#080f0e] hover:border-[#00e676]/30 transition group overflow-hidden"
             >
               {/* SECTION 1: Rank, Logo, Name (Kiri) */}
-              <div className="flex items-center p-5 gap-4 flex-1 min-w-0">
-                {/* Rank (Clean Auto-increment buat nomor urut) */}
-                <div className="text-center w-[50px] shrink-0 flex flex-col items-center justify-center">
+              {/* FIX: P-4 di HP, P-5 di Desktop biar ga terlalu sesak */}
+              <div className="flex items-center p-4 xl:p-5 gap-3 xl:gap-4 flex-1 min-w-0">
+                {/* Rank */}
+                <div className="text-center w-[40px] xl:w-[50px] shrink-0 flex flex-col items-center justify-center">
                   <div 
-                    className="font-extrabold text-4xl tabular-nums drop-shadow-sm" 
+                    className="font-extrabold text-3xl xl:text-4xl tabular-nums drop-shadow-sm" 
                     style={{ color: index < 3 ? borderColor : '#00e676' }}
                   >
                     {index + 1}
                   </div>
                 </div>
 
-                {/* DIVIDER KUNING KIRI */}
+                {/* DIVIDER KUNING KIRI (Desktop Only) */}
                 <div className="hidden xl:block w-[1px] bg-white/5 self-stretch -my-1"></div>
 
                 {/* Logo */}
-                <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden">
+                <div className="w-12 h-12 xl:w-16 xl:h-16 bg-white rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden">
                   {broker.logo_url ? (
-                    <img src={broker.logo_url} alt={broker.broker_name} className="object-contain w-12 h-12" />
+                    <img src={broker.logo_url} alt={broker.broker_name} className="object-contain w-10 h-10 xl:w-12 xl:h-12" />
                   ) : (
-                    <span className="text-black font-bold text-xl">{broker.broker_name?.slice(0, 2).toUpperCase()}</span>
+                    <span className="text-black font-bold text-lg xl:text-xl">{broker.broker_name?.slice(0, 2).toUpperCase()}</span>
                   )}
                 </div>
 
                 {/* Name + Licenses */}
                 <div className="flex-1 min-w-0">
-                  <div className="flex flex-wrap items-center gap-2 mb-1">
-                    <span className="text-white font-bold text-lg break-words">{broker.broker_name}</span>
+                  <div className="flex flex-wrap items-center gap-1.5 xl:gap-2 mb-1">
+                    <span className="text-white font-bold text-base xl:text-lg break-words">{broker.broker_name}</span>
                     <div className="flex flex-wrap gap-1">
                       {tags.map((tag) => (
-                        <span key={tag} className="text-[10px] border border-emerald-900 text-emerald-500 px-1.5 py-0.5 rounded font-bold">
+                        <span key={tag} className="text-[9px] xl:text-[10px] border border-emerald-900 text-emerald-500 px-1.5 py-0.5 rounded font-bold">
                           {tag}
                         </span>
                       ))}
                     </div>
                   </div>
-                  <div className="flex flex-wrap gap-1.5 items-center mt-1.5">
-                    <span className="text-[10px] text-gray-500 uppercase font-bold">Licenses:</span>
+                  <div className="flex flex-wrap gap-1.5 items-center mt-1">
+                    <span className="hidden sm:inline text-[10px] text-gray-500 uppercase font-bold">Licenses:</span>
                     {licenses.map((lic: string) => (
-                      <span key={lic} className="text-[10px] bg-[#0f1f0f] text-gray-400 px-1.5 py-0.5 rounded border border-white/5">
+                      <span key={lic} className="text-[9px] xl:text-[10px] bg-[#0f1f0f] text-gray-400 px-1.5 py-0.5 rounded border border-white/5">
                         {lic.trim()}
                       </span>
                     ))}
@@ -309,95 +310,95 @@ export default function HomeBrokerList() {
                 </div>
               </div>
 
-              {/* GARIS PEMBATAS 1 */}
+              {/* GARIS PEMBATAS 1 (Desktop: Vertikal, Mobile: Horizontal) */}
               <div className="hidden xl:block w-[1px] bg-white/5 my-4"></div>
+              <div className="block xl:hidden w-full h-[1px] bg-white/5"></div>
 
               {/* SECTION 2: Stats (Tengah) */}
-              <div className="w-[480px] shrink-0 grid grid-cols-3 gap-y-4 p-5 items-center">
-                <div className="flex items-center gap-3">
-                  <span className="text-emerald-500 text-lg">🕐</span>
+              {/* FIX: w-full di HP, grid-cols-2 di HP, sm:grid-cols-3 di Tablet/Desktop */}
+              <div className="w-full xl:w-[480px] shrink-0 grid grid-cols-2 sm:grid-cols-3 gap-y-4 gap-x-2 p-4 xl:p-5 items-center bg-white/[0.01] xl:bg-transparent">
+                <div className="flex items-center gap-2 xl:gap-3">
+                  <span className="text-emerald-500 text-base xl:text-lg">🕐</span>
                   <div>
-                    <div className="text-gray-500 text-[10px] uppercase font-bold">Founded</div>
-                    <div className="text-white font-bold text-sm">{broker.operating_period || "—"}</div>
+                    <div className="text-gray-500 text-[9px] xl:text-[10px] uppercase font-bold">Founded</div>
+                    <div className="text-white font-bold text-xs xl:text-sm">{broker.operating_period || "—"}</div>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-emerald-500 text-lg">📈</span>
+                <div className="flex items-center gap-2 xl:gap-3">
+                  <span className="text-emerald-500 text-base xl:text-lg">📈</span>
                   <div>
-                    <div className="text-gray-500 text-[10px] uppercase font-bold">{currency} Spread</div>
-                    <div className="text-white font-bold text-sm">0.0 Pips</div>
+                    <div className="text-gray-500 text-[9px] xl:text-[10px] uppercase font-bold">{currency} Spread</div>
+                    <div className="text-white font-bold text-xs xl:text-sm">0.0 Pips</div>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-emerald-500 text-lg">💰</span>
+                <div className="flex items-center gap-2 xl:gap-3">
+                  <span className="text-emerald-500 text-base xl:text-lg">💰</span>
                   <div>
-                    <div className="text-gray-500 text-[10px] uppercase font-bold">Min. Deposit</div>
-                    <div className="text-white font-bold text-sm">{broker.minimum_deposit || "$0"}</div>
+                    <div className="text-gray-500 text-[9px] xl:text-[10px] uppercase font-bold">Min. Deposit</div>
+                    <div className="text-white font-bold text-xs xl:text-sm">{broker.minimum_deposit || "$0"}</div>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-emerald-500 text-lg">⚡</span>
+                <div className="flex items-center gap-2 xl:gap-3">
+                  <span className="text-emerald-500 text-base xl:text-lg">⚡</span>
                   <div>
-                    <div className="text-gray-500 text-[10px] uppercase font-bold">Leverage</div>
-                    <div className="text-white font-bold text-sm">{broker.maximum_leverage_forex || "—"}</div>
+                    <div className="text-gray-500 text-[9px] xl:text-[10px] uppercase font-bold">Leverage</div>
+                    <div className="text-white font-bold text-xs xl:text-sm">{broker.maximum_leverage_forex || "—"}</div>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-emerald-500 text-lg">🎯</span>
+                <div className="flex items-center gap-2 xl:gap-3">
+                  <span className="text-emerald-500 text-base xl:text-lg">🎯</span>
                   <div>
-                    <div className="text-gray-500 text-[10px] uppercase font-bold">Instruments</div>
-                    <div className="text-white font-bold text-sm">{instrumentCount > 0 ? `${instrumentCount * 100}+` : "—"}</div>
+                    <div className="text-gray-500 text-[9px] xl:text-[10px] uppercase font-bold">Instruments</div>
+                    <div className="text-white font-bold text-xs xl:text-sm">{instrumentCount > 0 ? `${instrumentCount * 100}+` : "—"}</div>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-emerald-500 text-lg">🎁</span>
+                <div className="flex items-center gap-2 xl:gap-3">
+                  <span className="text-emerald-500 text-base xl:text-lg">🎁</span>
                   <div>
-                    <div className="text-gray-500 text-[10px] uppercase font-bold">Bonus</div>
-                    <div className="text-yellow-600 font-bold text-[11px]">No bonus offered</div>
+                    <div className="text-gray-500 text-[9px] xl:text-[10px] uppercase font-bold">Bonus</div>
+                    <div className="text-yellow-600 font-bold text-[10px] xl:text-[11px]">No bonus</div>
                   </div>
                 </div>
               </div>
 
-              {/* DIVIDER KUNING KANAN (Antara Stats dan Score) */}
+              {/* DIVIDER 2 (Desktop: Vertikal, Mobile: Horizontal) */}
               <div className="hidden xl:block w-[1px] bg-white/5 my-4"></div>
+              <div className="block xl:hidden w-full h-[1px] bg-white/5"></div>
 
               {/* SECTION 3: Score & CTA (Kanan) */}
-              <div className="flex items-center p-5 gap-6">
+              {/* FIX: justify-between di HP biar Kiri Score, Kanan Tombol */}
+              <div className="flex items-center justify-between xl:justify-start p-4 xl:p-5 gap-4 xl:gap-6 w-full xl:w-auto">
                 
                 {/* Score Area */}
-                <div className="text-center w-[90px] shrink-0">
-                  <div className="text-[10px] text-gray-500 font-bold uppercase mb-1">Score</div>
+                <div className="text-center w-[80px] xl:w-[90px] shrink-0">
+                  <div className="text-[9px] xl:text-[10px] text-gray-500 font-bold uppercase mb-0.5 xl:mb-1">Score</div>
                   <div className="flex items-baseline justify-center gap-1">
-                    <span className="text-[#00e676] text-4xl font-bold tabular-nums tracking-tight">
+                    <span className="text-[#00e676] text-3xl xl:text-4xl font-bold tabular-nums tracking-tight">
                       {score.toFixed(1)}
                     </span>
-                    <span className="text-gray-500 text-sm">/10</span>
+                    <span className="text-gray-500 text-xs xl:text-sm">/10</span>
                   </div>
-                  
-                  {/* Label Teks (Excellent, dll) */}
-                  <div className="text-gray-400 text-[11px] font-medium truncate">{scoreLabel}</div>
-                  
-                  {/* TAMBAH BINTANG DI BAWAH TULISAN */}
+                  <div className="text-gray-400 text-[10px] xl:text-[11px] font-medium truncate">{scoreLabel}</div>
                   <div className="flex justify-center gap-0.5 mt-1">
                     {[...Array(5)].map((_, i) => (
-                      <span key={i} className={`text-[10px] ${i < stars ? 'text-yellow-400' : 'text-gray-700'}`}>
+                      <span key={i} className={`text-[8px] xl:text-[10px] ${i < stars ? 'text-yellow-400' : 'text-gray-700'}`}>
                         ★
                       </span>
                     ))}
                   </div>
                 </div>
 
-                {/* DIVIDER HIJAU */}
+                {/* DIVIDER HIJAU (Desktop Only) */}
                 <div className="hidden xl:block w-[1px] bg-white/5 self-stretch -my-1"></div>
 
                 {/* CTA Buttons */}
-                <div className="flex flex-col gap-2 min-w-[140px]">
+                <div className="flex flex-col gap-2 flex-1 xl:min-w-[140px] max-w-[200px] xl:max-w-none">
                   <a href={broker.company_website || "#"} target="_blank" rel="noreferrer"
-                    className="bg-[#00e676] text-black text-[13px] font-bold py-2 rounded-lg hover:bg-[#00c060] transition text-center"
+                    className="bg-[#00e676] text-black text-xs xl:text-[13px] font-bold py-2 xl:py-2.5 rounded-lg hover:bg-[#00c060] transition text-center"
                   >
                     Visit Broker
                   </a>
-                  <button className="border border-white/10 text-white text-[13px] font-medium py-2 rounded-lg hover:bg-white/5 transition">
+                  <button className="border border-white/10 text-white text-xs xl:text-[13px] font-medium py-2 xl:py-2.5 rounded-lg hover:bg-white/5 transition">
                     Visit Hub
                   </button>
                 </div>

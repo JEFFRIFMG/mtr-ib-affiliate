@@ -1,5 +1,5 @@
 import Navbar from "@/components/Navbar";
-import HomeBrokerList from "@/components/HomeBrokerList";
+import HomeBrokerList from "@/app/_components/HomeBrokerList";
 import Footer from "@/components/Footer";
 
 export default function HomePage() {

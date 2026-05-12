@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import { Sun, Menu, X } from "lucide-react";
+import Link from "next/link";
 
 const navLinks = [
   { label: "Ranking", href: "#" },
   { label: "Comparison", href: "#" },
   { label: "Awards", href: "#" },
-  { label: "IB/Affiliate", href: "#", active: true },
+  { label: "IB/Affiliate", href: "/ib-affiliate", active: true },
   { label: "Blogs", href: "#" },
   { label: "About Us", href: "#" },
 ];
@@ -20,23 +21,23 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
 
         {/* Logo */}
-        <a href="#" className="text-xl font-bold font-gantari flex items-center">
+        <Link href="/" className="text-xl font-bold font-gantari flex items-center">
           <span className="text-white">Trading</span>
           <span className="text-green-mtr">Reviews</span>
-        </a>
+        </Link>
 
         {/* Desktop nav */}
         <ul className="hidden md:flex items-center gap-1">
           {navLinks.map((link) => (
             <li key={link.label} className="relative">
-              <a
+              <Link
                 href={link.href}
                 className={`px-4 py-2 text-sm rounded-md transition-colors font-gantari ${
                   link.active ? "text-green-mtr" : "text-gray-400 hover:text-white"
                 }`}
               >
                 {link.label}
-              </a>
+              </Link>
               {link.active && (
                 <span
                   className="absolute left-0 right-0 h-0.5 rounded-full bg-green-mtr"
@@ -71,15 +72,16 @@ export default function Navbar() {
       {mobileOpen && (
         <div className="md:hidden border-t border-white/[0.06] bg-[#050d0c] px-6 py-4 flex flex-col gap-1">
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.label}
               href={link.href}
               className={`px-3 py-2 text-sm rounded-md font-gantari ${
                 link.active ? "text-green-mtr bg-[#00e676]/10" : "text-gray-400"
               }`}
+              onClick={() => setMobileOpen(false)}
             >
               {link.label}
-            </a>
+            </Link>
           ))}
           <a
             href="#"
